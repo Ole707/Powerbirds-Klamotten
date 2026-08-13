@@ -3,154 +3,140 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#111111">
 <title>Power Birds MC – Clothing</title>
 <style>
-*{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;background:#111;color:#eee}
-header{background:#1b1b1b;padding:18px 16px;position:sticky;top:0;z-index:5;border-bottom:1px solid #333}
-header h1{margin:0;font-size:21px}.sub{color:#aaa;font-size:13px;margin-top:4px}
-main{max-width:900px;margin:auto;padding:18px 16px 90px}.card{background:#1b1b1b;border:1px solid #333;border-radius:14px;padding:16px;margin-bottom:14px}
-h2{margin-top:0}.muted{color:#aaa}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-.product{overflow:hidden;padding:0}.product img{width:100%;height:210px;object-fit:cover;background:#292929}.product .body{padding:14px}
-.price{font-size:20px;font-weight:bold}.row{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-select,input,button{font:inherit;border-radius:9px;padding:11px;border:1px solid #444;background:#242424;color:#fff}
-input,select{width:100%}button{cursor:pointer;background:#eee;color:#111;font-weight:bold;border:0}button.secondary{background:#333;color:#fff}button.danger{background:#7d2525;color:#fff}
-.actions{display:flex;gap:10px;flex-wrap:wrap}.actions button{flex:1}.bottom{position:fixed;bottom:0;left:0;right:0;background:#171717;border-top:1px solid #333;padding:10px;display:flex;justify-content:center;gap:8px;z-index:10}.bottom button{min-width:105px}
-.hidden{display:none!important}.badge{background:#444;border-radius:20px;padding:5px 9px;font-size:12px}.cartline{padding:12px 0;border-bottom:1px solid #333}.total{font-size:22px;font-weight:bold;text-align:right;margin-top:15px}.notice{padding:12px;border-radius:10px;background:#252525;color:#ddd;margin-bottom:14px}
-.logo{font-weight:900;letter-spacing:1px}
+body{font-family:Arial,sans-serif;background:#111;color:#eee;margin:0}
+header{padding:18px;background:#1b1b1b;border-bottom:1px solid #333}
+main{max-width:900px;margin:auto;padding:18px}
+.card{background:#1b1b1b;border:1px solid #333;border-radius:14px;padding:16px;margin-bottom:14px}
+.hidden{display:none}
+button,input,select{font:inherit;padding:10px;border-radius:8px;border:1px solid #444}
+button{cursor:pointer;font-weight:bold}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.product{background:#1b1b1b;border:1px solid #333;border-radius:14px;padding:14px}
+.muted{color:#aaa}.row{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
 </style>
 </head>
 <body>
-<header>
-  <h1>🏍️ <span class="logo">POWER BIRDS MC</span></h1>
-  <div class="sub">Interner Clothing Shop</div>
-</header>
-
+<header><h2>🏍️ POWER BIRDS MC – Clothing V2</h2></header>
 <main>
-  <section id="login">
-    <div class="card">
-      <h2>Willkommen 👊</h2>
-      <p class="muted">Wähle dein Mitglied aus.</p>
-      <select id="memberSelect"></select>
-      <div style="height:10px"></div>
-      <input id="pin" type="password" inputmode="numeric" placeholder="PIN (Demo: 1234)">
-      <div style="height:10px"></div>
-      <button onclick="login()">Anmelden</button>
-      <p class="muted" style="font-size:12px">Diese Version ist ein lokaler Prototyp. Die Mitgliederliste und PINs werden später durch eine echte Datenbank ersetzt.</p>
-    </div>
-  </section>
+<div id="config" class="card hidden">
+<b>Supabase noch nicht eingetragen.</b><br>
+Ersetze im Code die beiden Platzhalter SUPABASE_URL und SUPABASE_KEY.
+</div>
 
-  <section id="shop" class="hidden">
-    <div class="notice row">
-      <span>Angemeldet als <b id="currentMember"></b></span>
-      <span class="badge" id="cartBadge">Warenkorb: 0</span>
-    </div>
-    <h2>Klamotten</h2>
-    <div id="products" class="grid"></div>
-  </section>
+<section id="login" class="card">
+<h3>Login</h3>
+<select id="memberSelect"><option>Lade Mitglieder…</option></select>
+<br><br>
+<input id="pin" type="password" inputmode="numeric" placeholder="PIN">
+<br><br>
+<button onclick="login()">Anmelden</button>
+<div id="loginMsg"></div>
+</section>
 
-  <section id="cart" class="hidden">
-    <div class="card">
-      <h2>🛒 Warenkorb</h2>
-      <div id="cartItems"></div>
-      <div class="total" id="cartTotal">0,00 €</div>
-      <div class="actions" style="margin-top:15px">
-        <button class="secondary" onclick="show('shop')">Weiter einkaufen</button>
-        <button onclick="placeOrder()">Bestellung abschicken</button>
-      </div>
-    </div>
-  </section>
+<section id="shop" class="hidden">
+<div class="card row"><span>Angemeldet als <b id="memberName"></b></span><button onclick="logout()">Abmelden</button></div>
+<h3>Shop</h3>
+<div id="products" class="grid"></div>
+<div class="card"><button onclick="showCart()">🛒 Warenkorb (<span id="cartCount">0</span>)</button></div>
+</section>
 
-  <section id="orders" class="hidden">
-    <div class="card">
-      <h2>📋 Meine Bestellung</h2>
-      <div id="orderResult"></div>
-      <button class="secondary" onclick="show('shop')" style="margin-top:15px">Zurück zum Shop</button>
-    </div>
-  </section>
+<section id="cart" class="hidden card">
+<h3>Warenkorb</h3>
+<div id="cartItems"></div>
+<p><b>Gesamt: <span id="cartTotal">0,00 €</span></b></p>
+<button onclick="showShop()">Zurück</button>
+<button onclick="placeOrder()">Bestellung abschicken</button>
+<div id="orderMsg"></div>
+</section>
+
+<section id="orders" class="hidden card">
+<h3>Meine Bestellungen</h3>
+<div id="ordersList"></div>
+<button onclick="showShop()">Zurück zum Shop</button>
+</section>
 </main>
 
-<nav id="nav" class="bottom hidden">
-  <button onclick="show('shop')">👕 Shop</button>
-  <button onclick="show('cart')">🛒 Warenkorb</button>
-  <button onclick="show('orders')">📋 Bestellung</button>
-  <button class="secondary" onclick="logout()">Abmelden</button>
-</nav>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const members=["Ole","Peter","Frank","Mike","Sven","Tobi","Jan","Chris"];
-const PIN="1234";
+const SUPABASE_URL = "https://sxnjdetcxkmyeanivmbf.supabase.co";
+const SUPABASE_KEY = "sb_publishable_G9i_BbsW0MNB_QrbbvsEsw_OwsLhiaC";
 
-const products=[
- {id:1,name:"Power Birds T-Shirt",price:25,img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80"},
- {id:2,name:"Power Birds Hoodie",price:55,img:"https://images.unsplash.com/photo-1556821840-3a63f95609a7?auto=format&fit=crop&w=900&q=80"},
- {id:3,name:"Power Birds Cap",price:20,img:"https://images.unsplash.com/photo-1521369909029-2afed882baee?auto=format&fit=crop&w=900&q=80"},
- {id:4,name:"Power Birds Sweatshirt",price:45,img:"https://images.unsplash.com/photo-1578681994506-b8f463449011?auto=format&fit=crop&w=900&q=80"}
-];
+let db=null,currentMember=null,currentPin="",products=[],sizes=[],cart=[];
 
-let currentMember=localStorage.getItem("pb_member")||"";
-let cart=JSON.parse(localStorage.getItem("pb_cart")||"[]");
-let orders=JSON.parse(localStorage.getItem("pb_orders")||"[]");
-
-const memberSelect=document.getElementById("memberSelect");
-members.forEach(m=>{let o=document.createElement("option");o.value=m;o.textContent=m;memberSelect.appendChild(o)});
-
-function money(v){return v.toLocaleString("de-DE",{style:"currency",currency:"EUR"})}
-function save(){localStorage.setItem("pb_cart",JSON.stringify(cart));localStorage.setItem("pb_orders",JSON.stringify(orders))}
-function login(){
- if(document.getElementById("pin").value!==PIN){alert("Falsche PIN. Demo-PIN ist 1234.");return}
- currentMember=memberSelect.value;localStorage.setItem("pb_member",currentMember);
- document.getElementById("currentMember").textContent=currentMember;
- document.getElementById("login").classList.add("hidden");document.getElementById("nav").classList.remove("hidden");
- show("shop");
+function configured(){
+  return SUPABASE_URL.startsWith("https://") &&
+         !SUPABASE_URL.includes("PASTE_") &&
+         SUPABASE_KEY.length>20 &&
+         !SUPABASE_KEY.includes("PASTE_");
 }
-function logout(){currentMember="";localStorage.removeItem("pb_member");document.getElementById("nav").classList.add("hidden");["shop","cart","orders"].forEach(x=>document.getElementById(x).classList.add("hidden"));document.getElementById("login").classList.remove("hidden")}
-function show(id){
- ["login","shop","cart","orders"].forEach(x=>document.getElementById(x).classList.add("hidden"));
- document.getElementById(id).classList.remove("hidden");
- if(id==="shop")renderProducts(); if(id==="cart")renderCart(); if(id==="orders")renderOrders();
+function money(v){return Number(v||0).toLocaleString("de-DE",{style:"currency",currency:"EUR"})}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+
+async function init(){
+  if(!configured()){document.getElementById("config").classList.remove("hidden");return}
+  db=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+  const {data,error}=await db.rpc("get_active_members");
+  if(error){document.getElementById("loginMsg").textContent=error.message;return}
+  const s=document.getElementById("memberSelect"); s.innerHTML="";
+  data.forEach(m=>{const o=document.createElement("option");o.value=m.id;o.textContent=m.name;s.appendChild(o)})
+}
+async function login(){
+  const id=Number(document.getElementById("memberSelect").value);
+  const pin=document.getElementById("pin").value.trim();
+  const {data,error}=await db.rpc("verify_member_login",{p_member_id:id,p_pin:pin});
+  if(error||data!==true){document.getElementById("loginMsg").textContent="Name oder PIN falsch";return}
+  currentMember={id,name:document.getElementById("memberSelect").selectedOptions[0].textContent};
+  currentPin=pin; document.getElementById("memberName").textContent=currentMember.name;
+  document.getElementById("login").classList.add("hidden"); document.getElementById("shop").classList.remove("hidden");
+  await loadShop();
+}
+async function loadShop(){
+  const [{data:p},{data:s}]=await Promise.all([
+    db.from("products").select("id,name,description,price,image_url").eq("active",true).order("id"),
+    db.from("product_sizes").select("product_id,size").order("id")
+  ]);
+  products=p||[]; sizes=s||[]; renderProducts();
 }
 function renderProducts(){
- const el=document.getElementById("products");el.innerHTML="";
- products.forEach(p=>{
-  el.innerHTML+=`<article class="card product">
-   <img src="${p.img}" alt="${p.name}">
-   <div class="body"><h3>${p.name}</h3><div class="price">${money(p.price)}</div>
-   <div style="height:10px"></div><label>Größe</label><select id="size-${p.id}"><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select>
-   <div style="height:10px"></div><label>Menge</label><input id="qty-${p.id}" type="number" min="1" value="1">
-   <div style="height:10px"></div><button onclick="addToCart(${p.id})">In den Warenkorb</button></div>
-  </article>`;
- });
- updateBadge();
+  const el=document.getElementById("products"); el.innerHTML="";
+  products.forEach(p=>{
+    const opts=sizes.filter(s=>s.product_id===p.id).map(s=>`<option>${esc(s.size)}</option>`).join("");
+    el.innerHTML+=`<div class="product"><h4>${esc(p.name)}</h4><p class="muted">${esc(p.description||"")}</p><p><b>${money(p.price)}</b></p><select id="s${p.id}">${opts}</select><br><br><input id="q${p.id}" type="number" min="1" max="50" value="1"><br><br><button onclick="add(${p.id})">In den Warenkorb</button></div>`;
+  });
 }
-function addToCart(id){
- const p=products.find(x=>x.id===id), size=document.getElementById("size-"+id).value, qty=Math.max(1,parseInt(document.getElementById("qty-"+id).value||1));
- cart.push({id:p.id,name:p.name,price:p.price,size,qty});
- save();updateBadge();alert("Artikel wurde in den Warenkorb gelegt.");
+function add(id){
+  const p=products.find(x=>x.id===id);
+  const size=document.getElementById("s"+id).value;
+  const quantity=Math.max(1,Math.min(50,parseInt(document.getElementById("q"+id).value||1)));
+  cart.push({product_id:id,name:p.name,price:Number(p.price),size,quantity});
+  document.getElementById("cartCount").textContent=cart.reduce((s,x)=>s+x.quantity,0);
 }
-function updateBadge(){document.getElementById("cartBadge").textContent="Warenkorb: "+cart.reduce((s,x)=>s+x.qty,0)}
-function renderCart(){
- const el=document.getElementById("cartItems");
- if(!cart.length){el.innerHTML='<p class="muted">Dein Warenkorb ist leer.</p>';document.getElementById("cartTotal").textContent=money(0);return}
- let total=0;el.innerHTML="";
- cart.forEach((x,i)=>{total+=x.price*x.qty;el.innerHTML+=`<div class="cartline row"><div><b>${x.name}</b><br><span class="muted">Größe ${x.size} · ${x.qty} Stück</span></div><div><b>${money(x.price*x.qty)}</b><br><button class="danger" onclick="removeCart(${i})">Entfernen</button></div></div>`});
- document.getElementById("cartTotal").textContent=money(total);
+function showCart(){
+  document.getElementById("shop").classList.add("hidden");document.getElementById("cart").classList.remove("hidden");
+  const el=document.getElementById("cartItems"); el.innerHTML=""; let total=0;
+  cart.forEach((x,i)=>{total+=x.price*x.quantity;el.innerHTML+=`<p>${x.quantity}× ${esc(x.name)} · ${esc(x.size)} · ${money(x.price*x.quantity)} <button onclick="rem(${i})">Entfernen</button></p>`});
+  document.getElementById("cartTotal").textContent=money(total);
 }
-function removeCart(i){cart.splice(i,1);save();renderCart();updateBadge()}
-function placeOrder(){
- if(!cart.length){alert("Der Warenkorb ist leer.");return}
- const total=cart.reduce((s,x)=>s+x.price*x.qty,0);
- const order={id:"PB-"+Date.now(),member:currentMember,items:[...cart],total,date:new Date().toLocaleString("de-DE"),status:"Offen"};
- orders.push(order);cart=[];save();updateBadge();renderOrders();show("orders");
+function rem(i){cart.splice(i,1);showCart();document.getElementById("cartCount").textContent=cart.reduce((s,x)=>s+x.quantity,0)}
+function showShop(){document.getElementById("cart").classList.add("hidden");document.getElementById("orders").classList.add("hidden");document.getElementById("shop").classList.remove("hidden")}
+async function placeOrder(){
+  if(!cart.length){document.getElementById("orderMsg").textContent="Warenkorb ist leer";return}
+  const items=cart.map(x=>({product_id:x.product_id,size:x.size,quantity:x.quantity}));
+  const {data,error}=await db.rpc("create_clothing_order",{p_member_id:currentMember.id,p_pin:currentPin,p_items:items});
+  if(error){document.getElementById("orderMsg").textContent=error.message;return}
+  cart=[];document.getElementById("cartCount").textContent="0";await loadOrders();
 }
-function renderOrders(){
- const mine=orders.filter(o=>o.member===currentMember);
- const el=document.getElementById("orderResult");
- if(!mine.length){el.innerHTML='<p class="muted">Noch keine Bestellung vorhanden.</p>';return}
- el.innerHTML=mine.slice().reverse().map(o=>`<div class="card"><div class="row"><b>${o.id}</b><span class="badge">${o.status}</span></div><p class="muted">${o.date}</p>${o.items.map(x=>`<div>${x.qty}× ${x.name} · Größe ${x.size} · ${money(x.price*x.qty)}</div>`).join("")}<div class="total">${money(o.total)}</div></div>`).join("");
+async function loadOrders(){
+  const {data,error}=await db.rpc("get_member_orders",{p_member_id:currentMember.id,p_pin:currentPin});
+  if(error){document.getElementById("ordersList").textContent=error.message;return}
+  document.getElementById("cart").classList.add("hidden");document.getElementById("shop").classList.add("hidden");document.getElementById("orders").classList.remove("hidden");
+  const grouped={}; (data||[]).forEach(r=>{if(!grouped[r.order_id])grouped[r.order_id]={...r,items:[]};grouped[r.order_id].items.push(r)});
+  document.getElementById("ordersList").innerHTML=Object.values(grouped).map(o=>`<div><b>Bestellung #${o.order_id}</b> · ${esc(o.status)}<br>${o.items.map(x=>`${x.quantity}× ${esc(x.product_name)} (${esc(x.size)})`).join("<br>")}<p><b>${money(o.total)}</b></p><hr></div>`).join("");
 }
-
-if(currentMember){document.getElementById("currentMember").textContent=currentMember;document.getElementById("login").classList.add("hidden");document.getElementById("nav").classList.remove("hidden");show("shop")}
+function logout(){location.reload()}
+init();
 </script>
 </body>
 </html>

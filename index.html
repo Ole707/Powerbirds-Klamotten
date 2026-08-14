@@ -24,11 +24,12 @@ header {
 }
 
 header h2 {.club-logo {
-  width: 180px;
-  max-width: 70%;
+  width: 120px;
+  max-width: 35vw;
   height: auto;
   display: block;
-  margin: 0 auto 12px auto;
+  margin: 0 auto 10px auto;
+  object-fit: contain;
 }
   margin: 0;
   font-size: 28px;
@@ -119,6 +120,10 @@ button:hover {
 }
 
 @media (max-width: 600px) {
+  .club-logo {
+    width: 90px;
+    max-width: 28vw;
+    }
   header h2 {
     font-size: 21px;
   }

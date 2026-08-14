@@ -23,7 +23,13 @@ header {
   text-align: center;
 }
 
-header h2 {
+header h2 {.club-logo {
+  width: 180px;
+  max-width: 70%;
+  height: auto;
+  display: block;
+  margin: 0 auto 12px auto;
+}
   margin: 0;
   font-size: 28px;
   letter-spacing: 1px;
@@ -136,7 +142,10 @@ button:hover {
 </style>
 </head>
 <body>
-<header><h2>🏍️ POWER BIRDS MC – Clothing V2</h2></header>
+<header>
+  <img src="logo.jpeg" alt="Power Birds MC Logo" class="club-logo">
+  <h2>Clothing Shop</h2>
+</header>
 <main>
 <div id="config" class="card hidden">
 <b>Supabase noch nicht eingetragen.</b><br>

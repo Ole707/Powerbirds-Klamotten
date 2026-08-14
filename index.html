@@ -200,6 +200,22 @@ button:hover {
     min-height: 44px;
   }
 }
+.product-image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  background: #111;
+  border-radius: 12px;
+  border: 1px solid #333;
+}
+
+.product-image.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777;
+  font-size: 14px;
+}
 </style>
 </head>
 <body>
@@ -289,7 +305,20 @@ function renderProducts(){
   const el=document.getElementById("products"); el.innerHTML="";
   products.forEach(p=>{
     const opts=sizes.filter(s=>s.product_id===p.id).map(s=>`<option>${esc(s.size)}</option>`).join("");
-    el.innerHTML+=`<div class="product"><h4>${esc(p.name)}</h4><p class="muted">${esc(p.description||"")}</p><p><b>${money(p.price)}</b></p><select id="s${p.id}">${opts}</select><br><br><input id="q${p.id}" type="number" min="1" max="50" value="1"><br><br><button onclick="add(${p.id})">In den Warenkorb</button></div>`;
+    const imageHtml = p.image_url
+  ? `<img src="${esc(p.image_url)}" alt="${esc(p.name)}" class="product-image">`
+  : `<div class="product-image placeholder">Kein Bild vorhanden</div>`;
+
+el.innerHTML+=`
+<div class="product">
+  ${imageHtml}
+  <h4>${esc(p.name)}</h4>
+  <p class="muted">${esc(p.description||"")}</p>
+  <p><b>${money(p.price)}</b></p>
+  <select id="s${p.id}">${opts}</select>
+  <input id="q${p.id}" type="number" min="1" max="50" value="1">
+  <button onclick="add(${p.id})">In den Warenkorb</button>
+</div>`;
   });
 }
 function add(id){

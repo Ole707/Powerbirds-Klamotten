@@ -236,9 +236,17 @@ Ersetze im Code die beiden Platzhalter SUPABASE_URL und SUPABASE_KEY.
 <button onclick="login()">Anmelden</button>
 <div id="loginMsg"></div>
 </section>
+<section id="admin" class="hidden card">
+  <h3>⚙️ Admin-Bereich</h3>
+  <p>Artikel verwalten</p>
 
+  <div id="adminProducts"></div>
+
+  <button onclick="showShop()">Zurück zum Shop</button>
+</section>
 <section id="shop" class="hidden">
 <div class="card row"><span>Angemeldet als <b id="memberName"></b></span><button onclick="logout()">Abmelden</button></div>
+<button id="adminBtn" class="hidden" onclick="showAdmin()">⚙️ Admin-Bereich</button>
 <h3>Shop</h3>
 <div id="products" class="grid"></div>
 <div class="card"><button onclick="showCart()">🛒 Warenkorb (<span id="cartCount">0</span>)</button></div>
@@ -336,6 +344,12 @@ function showCart(){
 }
 function rem(i){cart.splice(i,1);showCart();document.getElementById("cartCount").textContent=cart.reduce((s,x)=>s+x.quantity,0)}
 function showShop(){document.getElementById("cart").classList.add("hidden");document.getElementById("orders").classList.add("hidden");document.getElementById("shop").classList.remove("hidden")}
+function showAdmin(){
+  document.getElementById("shop").classList.add("hidden");
+  document.getElementById("cart").classList.add("hidden");
+  document.getElementById("orders").classList.add("hidden");
+  document.getElementById("admin").classList.remove("hidden");
+}
 async function placeOrder(){
   if(!cart.length){document.getElementById("orderMsg").textContent="Warenkorb ist leer";return}
   const items=cart.map(x=>({product_id:x.product_id,size:x.size,quantity:x.quantity}));

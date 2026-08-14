@@ -120,6 +120,27 @@ button:hover {
 }
 
 @media (max-width: 600px) {
+  #login {
+  padding: 18px;
+}
+
+#login h3 {
+  margin-top: 0;
+  margin-bottom: 18px;
+}
+
+#login select,
+#login input {
+  width: 100%;
+  margin-bottom: 12px;
+  min-height: 46px;
+}
+
+#login button {
+  width: 100%;
+  min-height: 48px;
+  margin-top: 2px;
+}
   .club-logo {
     width: 90px;
     max-width: 28vw;
@@ -160,9 +181,7 @@ Ersetze im Code die beiden Platzhalter SUPABASE_URL und SUPABASE_KEY.
 <section id="login" class="card">
 <h3>Login</h3>
 <select id="memberSelect"><option>Lade Mitglieder…</option></select>
-<br><br>
 <input id="pin" type="password" inputmode="numeric" placeholder="PIN">
-<br><br>
 <button onclick="login()">Anmelden</button>
 <div id="loginMsg"></div>
 </section>

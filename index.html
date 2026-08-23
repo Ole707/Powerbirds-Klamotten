@@ -290,15 +290,26 @@ async function init(){
   const {data,error}=await db.rpc("get_active_members");
   if(error){document.getElementById("loginMsg").textContent=error.message;return}
   const s=document.getElementById("memberSelect"); s.innerHTML="";
-  data.forEach(m=>{const o=document.createElement("option");o.value=m.id;o.textContent=m.name;s.appendChild(o)})
+  data.forEach(m=>{
+  const o=document.createElement("option");
+  o.value=m.id;
+  o.textContent=m.name;
+  o.dataset.admin=m.is_admin ? "true" : "false";
+  s.appendChild(o);
+})
 }
 async function login(){
   const id=Number(document.getElementById("memberSelect").value);
   const pin=document.getElementById("pin").value.trim();
   const {data,error}=await db.rpc("verify_member_login",{p_member_id:id,p_pin:pin});
   if(error||data!==true){document.getElementById("loginMsg").textContent="Name oder PIN falsch";return}
-  currentMember={id,name:document.getElementById("memberSelect").selectedOptions[0].textContent};
+  currentMember={
+  id,
+  name:document.getElementById("memberSelect").selectedOptions[0].textContent,
+  is_admin:document.getElementById("memberSelect").selectedOptions[0].dataset.admin==="true"
+};
   currentPin=pin; document.getElementById("memberName").textContent=currentMember.name;
+  document.getElementById("adminBtn").classList.toggle("hidden", !currentMember.is_admin);
   document.getElementById("login").classList.add("hidden"); document.getElementById("shop").classList.remove("hidden");
   await loadShop();
 }

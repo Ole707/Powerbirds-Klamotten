@@ -273,8 +273,7 @@ Ersetze im Code die beiden Platzhalter SUPABASE_URL und SUPABASE_KEY.
 const SUPABASE_URL = "https://sxnjdetcxkmyeanivmbf.supabase.co";
 const SUPABASE_KEY = "sb_publishable_G9i_BbsW0MNB_QrbbvsEsw_OwsLhiaC";
 
-let db=null,currentMember=null,currentPin="",products=[],sizes=[],cart=[];
-
+let db=null,currentMember=null,currentPin="",products=[],sizes=[],colors=[],cart=[];
 function configured(){
   return SUPABASE_URL.startsWith("https://") &&
          !SUPABASE_URL.includes("PASTE_") &&
@@ -314,16 +313,26 @@ async function login(){
   await loadShop();
 }
 async function loadShop(){
-  const [{data:p},{data:s}]=await Promise.all([
-    db.from("products").select("id,name,description,price,image_url").eq("active",true).order("id"),
-    db.from("product_sizes").select("product_id,size").order("id")
-  ]);
-  products=p||[]; sizes=s||[]; renderProducts();
+ const [{data:p},{data:s},{data:c}]=await Promise.all([
+  db.from("products").select("id,name,description,price,image_url").eq("active",true).order("id"),
+  db.from("product_sizes").select("product_id,size").order("id"),
+  db.from("product_colors").select("product_id,color").order("id")
+]);
+
+products=p||[];
+sizes=s||[];
+colors=c||[];
+
+renderProducts();
 }
 function renderProducts(){
   const el=document.getElementById("products"); el.innerHTML="";
   products.forEach(p=>{
     const opts=sizes.filter(s=>s.product_id===p.id).map(s=>`<option>${esc(s.size)}</option>`).join("");
+    const colorOpts=colors
+  .filter(c=>c.product_id===p.id)
+  .map(c=>`<option>${esc(c.color)}</option>`)
+  .join("");
     const imageHtml = p.image_url
   ? `<img src="${esc(p.image_url)}" alt="${esc(p.name)}" class="product-image">`
   : `<div class="product-image placeholder">Kein Bild vorhanden</div>`;
@@ -335,22 +344,27 @@ el.innerHTML+=`
   <p class="muted">${esc(p.description||"")}</p>
   <p><b>${money(p.price)}</b></p>
   <select id="s${p.id}">${opts}</select>
+  <select id="c${p.id}">${colorOpts}</select>
   <input id="q${p.id}" type="number" min="1" max="50" value="1">
   <button onclick="add(${p.id})">In den Warenkorb</button>
 </div>`;
   });
 }
 function add(id){
-  const p=products.find(x=>x.id===id);
-  const size=document.getElementById("s"+id).value;
-  const quantity=Math.max(1,Math.min(50,parseInt(document.getElementById("q"+id).value||1)));
-  cart.push({product_id:id,name:p.name,price:Number(p.price),size,quantity});
+  cart.push({
+  product_id:id,
+  name:p.name,
+  price:Number(p.price),
+  size,
+  color,
+  quantity
+});
   document.getElementById("cartCount").textContent=cart.reduce((s,x)=>s+x.quantity,0);
 }
 function showCart(){
   document.getElementById("shop").classList.add("hidden");document.getElementById("cart").classList.remove("hidden");
   const el=document.getElementById("cartItems"); el.innerHTML=""; let total=0;
-  cart.forEach((x,i)=>{total+=x.price*x.quantity;el.innerHTML+=`<p>${x.quantity}× ${esc(x.name)} · ${esc(x.size)} · ${money(x.price*x.quantity)} <button onclick="rem(${i})">Entfernen</button></p>`});
+  cart.forEach((x,i)=>{total+=x.price*x.quantity;el.innerHTML+=`<p>${x.quantity}× ${esc(x.name)} · ${esc(x.size)} · ${esc(x.color)} · ${money(x.price*x.quantity)} <button onclick="rem(${i})">Entfernen</button></p>`});
   document.getElementById("cartTotal").textContent=money(total);
 }
 function rem(i){cart.splice(i,1);showCart();document.getElementById("cartCount").textContent=cart.reduce((s,x)=>s+x.quantity,0)}
@@ -454,7 +468,12 @@ async function showAdmin(){
  
 async function placeOrder(){
   if(!cart.length){document.getElementById("orderMsg").textContent="Warenkorb ist leer";return}
-  const items=cart.map(x=>({product_id:x.product_id,size:x.size,quantity:x.quantity}));
+const items=cart.map(x=>({
+  product_id:x.product_id,
+  size:x.size,
+  color:x.color,
+  quantity:x.quantity
+}));
   const {data,error}=await db.rpc("create_clothing_order",{p_member_id:currentMember.id,p_pin:currentPin,p_items:items});
   if(error){document.getElementById("orderMsg").textContent=error.message;return}
   cart=[];document.getElementById("cartCount").textContent="0";await loadOrders();

@@ -451,11 +451,7 @@ async function showAdmin(){
   await loadShop();
   await renderAdminProducts();
 }
-  document.getElementById("shop").classList.add("hidden");
-  document.getElementById("cart").classList.add("hidden");
-  document.getElementById("orders").classList.add("hidden");
-  document.getElementById("admin").classList.remove("hidden");
-}
+ 
 async function placeOrder(){
   if(!cart.length){document.getElementById("orderMsg").textContent="Warenkorb ist leer";return}
   const items=cart.map(x=>({product_id:x.product_id,size:x.size,quantity:x.quantity}));

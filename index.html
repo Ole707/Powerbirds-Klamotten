@@ -417,9 +417,9 @@ async function showAdmin(){
 
       <br><br>
 
-      <label>Bild-URL</label>
-      <input id="admin-image-${p.id}" value="${esc(p.image_url || "")}">
-
+      <label>Bild auswählen</label>
+<input id="admin-image-file-${p.id}" type="file" accept="image/*">
+<input id="admin-image-${p.id}" type="hidden" value="${esc(p.image_url || "")}">
       <br><br>
 
       <button onclick="saveAdminProduct(${p.id})">
@@ -433,6 +433,35 @@ async function showAdmin(){
     alert("Kein Admin-Zugriff.");
     return;
   }
+    const fileInput = document.getElementById(`admin-image-file-${id}`);
+const file = fileInput?.files?.[0];
+
+if(file){
+  const formData = new FormData();
+  formData.append("member_id", currentMember.id);
+  formData.append("pin", currentPin);
+  formData.append("file", file);
+
+  const response = await fetch(
+    `${SUPABASE_URL}/functions/v1/admin-image-upload`,
+    {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_KEY
+      },
+      body: formData
+    }
+  );
+
+  const result = await response.json();
+
+  if(!response.ok || !result.success){
+    alert("Bild-Upload fehlgeschlagen: " + (result.error || "Unbekannter Fehler"));
+    return;
+  }
+
+  document.getElementById(`admin-image-${id}`).value = result.url;
+}
 
   const name = document.getElementById(`admin-name-${id}`).value.trim();
   const description = document.getElementById(`admin-desc-${id}`).value.trim();

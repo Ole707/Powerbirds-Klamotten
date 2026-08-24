@@ -351,6 +351,10 @@ el.innerHTML+=`
   });
 }
 function add(id){
+  const p=products.find(x=>x.id===id);
+const size=document.getElementById("s"+id).value;
+const color=document.getElementById("c"+id)?.value || "";
+const quantity=Math.max(1,Math.min(50,parseInt(document.getElementById("q"+id).value||1)));
   cart.push({
   product_id:id,
   name:p.name,

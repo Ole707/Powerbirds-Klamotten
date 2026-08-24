@@ -443,7 +443,7 @@ if(file){
   formData.append("file", file);
 
   const response = await fetch(
-    `${SUPABASE_URL}/functions/v1/admin-image-upload`,
+    `${SUPABASE_URL}/functions/v1/smooth-worker`,
     {
       method: "POST",
       headers: {

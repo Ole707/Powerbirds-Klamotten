@@ -389,7 +389,28 @@ async function showAdmin(){
   async function renderAdminProducts(){
   const el = document.getElementById("adminProducts");
   el.innerHTML = "Lade Artikel…";
+el.innerHTML = `
+  <div class="card">
+    <h3>➕ Neuen Artikel hinzufügen</h3>
 
+    <label>Artikelname</label>
+    <input id="new-name" placeholder="z.B. Power Birds Jacke">
+
+    <br><br>
+
+    <label>Beschreibung</label>
+    <input id="new-desc" placeholder="Beschreibung">
+
+    <br><br>
+
+    <label>Preis</label>
+    <input id="new-price" type="number" step="0.01" placeholder="0,00">
+
+    <br><br>
+
+    <button onclick="addAdminProduct()">Artikel hinzufügen</button>
+  </div>
+`;
   const {data,error} = await db
     .from("products")
     .select("id,name,description,price,image_url,active")
@@ -400,7 +421,7 @@ async function showAdmin(){
     return;
   }
 
-  el.innerHTML = data.map(p => `
+  el.innerHTML + data.map(p => `
     <div class="card">
       <label>Artikelname</label>
       <input id="admin-name-${p.id}" value="${esc(p.name)}">
@@ -427,6 +448,44 @@ async function showAdmin(){
       </button>
     </div>
   `).join("");
+}
+  async function addAdminProduct(){
+  if(!currentMember || !currentMember.is_admin){
+    alert("Kein Admin-Zugriff.");
+    return;
+  }
+
+  const name = document.getElementById("new-name").value.trim();
+  const description = document.getElementById("new-desc").value.trim();
+  const price = Number(document.getElementById("new-price").value);
+
+  if(!name){
+    alert("Bitte einen Artikelnamen eingeben.");
+    return;
+  }
+
+  if(Number.isNaN(price) || price < 0){
+    alert("Bitte einen gültigen Preis eingeben.");
+    return;
+  }
+
+  const {error} = await db.rpc("admin_create_product", {
+    p_member_id: currentMember.id,
+    p_pin: currentPin,
+    p_name: name,
+    p_description: description,
+    p_price: price
+  });
+
+  if(error){
+    alert("Artikel konnte nicht angelegt werden: " + error.message);
+    return;
+  }
+
+  alert("Artikel hinzugefügt ✅");
+
+  await loadShop();
+  await renderAdminProducts();
 }
   async function saveAdminProduct(id){
   if(!currentMember || !currentMember.is_admin){

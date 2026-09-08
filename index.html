@@ -437,7 +437,39 @@ el.innerHTML = `
       <input id="admin-price-${p.id}" type="number" step="0.01" value="${p.price}">
 
       <br><br>
+<label>Größen</label>
+<div id="admin-sizes-${p.id}">
+  ${["XS","S","M","L","XL","XXL","3XL"].map(size => `
+    <label style="display:inline-block;margin:4px 8px 4px 0;">
+      <input
+        type="checkbox"
+        class="size-check-${p.id}"
+        value="${size}"
+        ${sizes.some(s => s.product_id === p.id && s.size === size) ? "checked" : ""}
+      >
+      ${size}
+    </label>
+  `).join("")}
+</div>
 
+<br>
+
+<label>Farben</label>
+<div id="admin-colors-${p.id}">
+  ${["Schwarz","Weiß","Grau","Rot","Blau","Grün","Beige"].map(color => `
+    <label style="display:inline-block;margin:4px 8px 4px 0;">
+      <input
+        type="checkbox"
+        class="color-check-${p.id}"
+        value="${color}"
+        ${colors.some(c => c.product_id === p.id && c.color === color) ? "checked" : ""}
+      >
+      ${color}
+    </label>
+  `).join("")}
+</div>
+
+<br><br>
       <label>Bild auswählen</label>
 <input id="admin-image-file-${p.id}" type="file" accept="image/*">
 <input id="admin-image-${p.id}" type="hidden" value="${esc(p.image_url || "")}">
@@ -527,7 +559,13 @@ if(file){
   const description = document.getElementById(`admin-desc-${id}`).value.trim();
   const price = Number(document.getElementById(`admin-price-${id}`).value);
   const image_url = document.getElementById(`admin-image-${id}`).value.trim();
+const selectedSizes = Array.from(
+  document.querySelectorAll(`.size-check-${id}:checked`)
+).map(x => x.value);
 
+const selectedColors = Array.from(
+  document.querySelectorAll(`.color-check-${id}:checked`)
+).map(x => x.value);
   if(!name){
     alert("Bitte einen Artikelnamen eingeben.");
     return;
@@ -552,7 +590,29 @@ if(file){
     alert("Speichern fehlgeschlagen: " + error.message);
     return;
   }
+const {error: sizeError} = await db.rpc("admin_set_product_sizes", {
+  p_member_id: currentMember.id,
+  p_pin: currentPin,
+  p_product_id: id,
+  p_sizes: selectedSizes
+});
 
+if(sizeError){
+  alert("Größen konnten nicht gespeichert werden: " + sizeError.message);
+  return;
+}
+
+const {error: colorError} = await db.rpc("admin_set_product_colors", {
+  p_member_id: currentMember.id,
+  p_pin: currentPin,
+  p_product_id: id,
+  p_colors: selectedColors
+});
+
+if(colorError){
+  alert("Farben konnten nicht gespeichert werden: " + colorError.message);
+  return;
+}
   alert("Artikel gespeichert ✅");
 
   await loadShop();

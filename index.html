@@ -421,7 +421,7 @@ el.innerHTML = `
     return;
   }
 
-  el.innerHTML + data.map(p => `
+  el.innerHTML += data.map(p => `
     <div class="card">
       <label>Artikelname</label>
       <input id="admin-name-${p.id}" value="${esc(p.name)}">

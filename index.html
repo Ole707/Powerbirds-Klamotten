@@ -513,6 +513,11 @@ el.innerHTML = `
   const name = document.getElementById("new-name").value.trim();
   const description = document.getElementById("new-desc").value.trim();
   const price = Number(document.getElementById("new-price").value);
+    const selectedSizes = [...document.querySelectorAll('input[name="new-size"]:checked')]
+  .map(el => el.value);
+
+const selectedColors = [...document.querySelectorAll('input[name="new-color"]:checked')]
+  .map(el => el.value);
 
   if(!name){
     alert("Bitte einen Artikelnamen eingeben.");
@@ -524,7 +529,7 @@ el.innerHTML = `
     return;
   }
 
-  const {error} = await db.rpc("admin_create_product", {
+  const {data: newProductId, error} = await db.rpc("admin_create_product", {
     p_member_id: currentMember.id,
     p_pin: currentPin,
     p_name: name,
@@ -536,7 +541,18 @@ el.innerHTML = `
     alert("Artikel konnte nicht angelegt werden: " + error.message);
     return;
   }
+const { error: optionsError } = await db.rpc("admin_set_product_options", {
+  p_member_id: currentMember.id,
+  p_pin: currentPin,
+  p_product_id: newProductId,
+  p_sizes: selectedSizes,
+  p_colors: selectedColors
+});
 
+if (optionsError) {
+  alert("Fehler beim Speichern von Größen/Farben: " + optionsError.message);
+  return;
+}
   alert("Artikel hinzugefügt ✅");
 
   await loadShop();

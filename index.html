@@ -541,6 +541,7 @@ const selectedColors = [...document.querySelectorAll('input[name="new-color"]:ch
     alert("Artikel konnte nicht angelegt werden: " + error.message);
     return;
   }
+    alert("Größen: " + selectedSizes.join(", ") + " | Farben: " + selectedColors.join(", "));
 const { error: optionsError } = await db.rpc("admin_set_product_options", {
   p_member_id: currentMember.id,
   p_pin: currentPin,

@@ -328,9 +328,9 @@ renderProducts();
 function renderProducts(){
   const el=document.getElementById("products"); el.innerHTML="";
   products.forEach(p=>{
-    const opts=sizes.filter(s=>s.product_id===p.id).map(s=>`<option>${esc(s.size)}</option>`).join("");
+    const opts=sizes.filter(s=>Number(s.product_id)===(p.id).map(s=>`<option>${esc(s.size)}</option>`).join("");
     const colorOpts=colors
-  .filter(c=>c.product_id===p.id)
+  .filter(c=>Number(c.product_id)===Number(p.id))
   .map(c=>`<option>${esc(c.color)}</option>`)
   .join("");
     const imageHtml = p.image_url

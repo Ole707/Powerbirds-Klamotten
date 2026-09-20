@@ -513,10 +513,11 @@ el.innerHTML = `
   const name = document.getElementById("new-name").value.trim();
   const description = document.getElementById("new-desc").value.trim();
   const price = Number(document.getElementById("new-price").value);
-    const selectedSizes = [...document.querySelectorAll('input[name="new-size"]:checked')]
+    const selectedSizes = [...document.querySelectorAll('.new-size:checked')]
   .map(el => el.value);
+  
 
-const selectedColors = [...document.querySelectorAll('input[name="new-color"]:checked')]
+const selectedColors = [...document.querySelectorAll('.new-color:checked')]
   .map(el => el.value);
 
   if(!name){

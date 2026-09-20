@@ -407,7 +407,30 @@ el.innerHTML = `
     <input id="new-price" type="number" step="0.01" placeholder="0,00">
 
     <br><br>
+<label>Größen</label><br>
+<label><input type="checkbox" class="new-size" value="XS"> XS</label>
+<label><input type="checkbox" class="new-size" value="S"> S</label>
+<label><input type="checkbox" class="new-size" value="M"> M</label>
+<label><input type="checkbox" class="new-size" value="L"> L</label>
+<label><input type="checkbox" class="new-size" value="XL"> XL</label>
+<label><input type="checkbox" class="new-size" value="XXL"> XXL</label>
+<label><input type="checkbox" class="new-size" value="3XL"> 3XL</label>
 
+<br><br>
+<label>Farben</label><br>
+<label><input type="checkbox" class="new-color" value="Schwarz"> Schwarz</label>
+<label><input type="checkbox" class="new-color" value="Weiß"> Weiß</label>
+<label><input type="checkbox" class="new-color" value="Grau"> Grau</label>
+<label><input type="checkbox" class="new-color" value="Rot"> Rot</label>
+<label><input type="checkbox" class="new-color" value="Blau"> Blau</label>
+<label><input type="checkbox" class="new-color" value="Grün"> Grün</label>
+<label><input type="checkbox" class="new-color" value="Beige"> Beige</label>
+
+<br><br>
+<label>Bild auswählen</label><br>
+<input id="new-image-file" type="file" accept="image/*">
+
+<br><br>
     <button onclick="addAdminProduct()">Artikel hinzufügen</button>
   </div>
 `;

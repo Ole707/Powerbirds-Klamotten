@@ -301,7 +301,7 @@ async function login(){
   const id=Number(document.getElementById("memberSelect").value);
   const pin=document.getElementById("pin").value.trim();
   const {data,error}=await db.rpc("verify_member_login",{p_member_id:id,p_pin:pin});
-  if(error||data!==true){document.getElementById("loginMsg").textContent="Name oder PIN falsch";return}
+  if(error||data!==true){document.getElementById("loginMsg").textContent=error ? error.message : "Name oder PIN falsch";return}
   currentMember={
   id,
   name:document.getElementById("memberSelect").selectedOptions[0].textContent,

@@ -513,7 +513,9 @@ el.innerHTML = `
   const name = document.getElementById("new-name").value.trim();
   const description = document.getElementById("new-desc").value.trim();
   const price = Number(document.getElementById("new-price").value);
-    const selectedSizes = [...document.querySelectorAll('.new-size:checked')]
+  const fileInput = document.getElementById("new-image-file");
+  const file = fileInput?.files?.[0];
+  const selectedSizes = [...document.querySelectorAll('.new-size:checked')]
   .map(el => el.value);
   
 
@@ -529,13 +531,41 @@ const selectedColors = [...document.querySelectorAll('.new-color:checked')]
     alert("Bitte einen gültigen Preis eingeben.");
     return;
   }
+  let image_url = "";
 
+if (file) {
+  const formData = new FormData();
+  formData.append("member_id", currentMember.id);
+  formData.append("pin", currentPin);
+  formData.append("file", file);
+
+  const response = await fetch(
+    `${SUPABASE_URL}/functions/v1/smooth-worker`,
+    {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_KEY
+      },
+      body: formData
+    }
+  );
+
+  const result = await response.json();
+
+  if (!response.ok || !result.success) {
+    alert("Bild-Upload fehlgeschlagen: " + (result.error || "Unbekannter Fehler"));
+    return;
+  }
+
+  image_url = result.url;
+}
   const {data: newProductId, error} = await db.rpc("admin_create_product", {
     p_member_id: currentMember.id,
     p_pin: currentPin,
     p_name: name,
     p_description: description,
     p_price: price
+    p_image_url: image_url
   });
 
   if(error){

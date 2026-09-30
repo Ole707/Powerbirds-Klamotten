@@ -434,10 +434,10 @@ el.innerHTML = `
     <button onclick="addAdminProduct()">Artikel hinzufügen</button>
   </div>
 `;
-  const {data,error} = await db
-    .from("products")
-    .select("id,name,description,price,image_url,active")
-    .order("id");
+  const {data,error} = await db.rpc("get_admin_products", {
+  p_member_id: currentMember.id,
+  p_pin: currentPin
+});
 
   if(error){
     el.innerHTML = "Fehler beim Laden: " + esc(error.message);

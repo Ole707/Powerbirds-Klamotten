@@ -501,8 +501,37 @@ el.innerHTML = `
       <button onclick="saveAdminProduct(${p.id})">
         Speichern
       </button>
+      
+      <button onclick="deactivateAdminProduct(${p.id})">
+  🚫 Artikel deaktivieren
+</button>
     </div>
   `).join("");
+}
+  async function deactivateAdminProduct(id){
+  if(!currentMember || !currentMember.is_admin){
+    alert("Kein Admin-Zugriff.");
+    return;
+  }
+
+  if(!confirm("Diesen Artikel wirklich deaktivieren?")){
+    return;
+  }
+
+  const { error } = await db.rpc("admin_deactivate_product", {
+    p_member_id: currentMember.id,
+    p_pin: currentPin,
+    p_product_id: id
+  });
+
+  if(error){
+    alert("Artikel konnte nicht deaktiviert werden: " + error.message);
+    return;
+  }
+
+  alert("Artikel wurde deaktiviert. ✅");
+  await loadShop();
+  await renderAdminProducts();
 }
   async function addAdminProduct(){
   if(!currentMember || !currentMember.is_admin){
